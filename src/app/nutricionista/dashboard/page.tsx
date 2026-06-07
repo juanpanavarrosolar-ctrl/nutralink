@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { Plus, FileText, ShoppingBag, Banknote, ChevronRight, Clock } from 'lucide-react'
-import { createServerSupabaseClient } from '@/lib/supabase'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { prisma } from '@/lib/prisma'
 import { formatCLP } from '@/lib/utils'
 import { CopyLinkButton } from '@/components/nutricionista/CopyLinkButton'
