@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  engineType = "library"
 }
 
 datasource db {
@@ -92,10 +93,10 @@ model Protocolo {
 }
 
 model ItemProtocolo {
-  id           String @id @default(uuid())
-  protocolo_id String
-  producto_id  String
-  cantidad     Int    @default(1)
+  id            String @id @default(uuid())
+  protocolo_id  String
+  producto_id   String
+  cantidad      Int    @default(1)
   instrucciones String
 
   protocolo Protocolo @relation(fields: [protocolo_id], references: [id], onDelete: Cascade)
@@ -114,7 +115,7 @@ model Orden {
   direccion_despacho String
   total              Int
   estado             EstadoOrden @default(PENDIENTE)
-  flow_token         String?     
+  flow_token         String?
   es_recompra        Boolean     @default(false)
   creado_en          DateTime    @default(now())
 
@@ -126,10 +127,10 @@ model Orden {
 }
 
 model ItemOrden {
-  id             String @id @default(uuid())
-  orden_id       String
-  producto_id    String
-  cantidad       Int
+  id              String @id @default(uuid())
+  orden_id        String
+  producto_id     String
+  cantidad        Int
   precio_unitario Int
 
   orden    Orden    @relation(fields: [orden_id], references: [id], onDelete: Cascade)
