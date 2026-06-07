@@ -69,6 +69,7 @@ model Producto {
   items_protocolo ItemProtocolo[]
   items_orden     ItemOrden[]
 
+  @@unique([nombre])
   @@map("productos")
 }
 
@@ -113,7 +114,7 @@ model Orden {
   direccion_despacho String
   total              Int
   estado             EstadoOrden @default(PENDIENTE)
-  flow_token         String?
+  flow_token         String?     
   es_recompra        Boolean     @default(false)
   creado_en          DateTime    @default(now())
 
