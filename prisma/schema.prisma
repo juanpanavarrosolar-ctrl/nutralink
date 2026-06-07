@@ -1,0 +1,154 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum Rol {
+  NUTRICIONISTA
+  ADMIN
+}
+
+enum CategoriaProducto {
+  VITAMINAS
+  MINERALES
+  PROTEINAS
+  OMEGA
+  PROBIOTICOS
+  OTRO
+}
+
+enum EstadoOrden {
+  PENDIENTE
+  PAGADA
+  DESPACHADA
+  ENTREGADA
+  CANCELADA
+}
+
+enum EstadoComision {
+  PENDIENTE
+  PAGADA
+}
+
+// ─── Modelos ─────────────────────────────────────────────────────────────────
+
+model Usuario {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  nombre      String
+  rol         Rol
+  rut         String?  @unique
+  especialidad String?
+  activo      Boolean  @default(true)
+  creado_en   DateTime @default(now())
+
+  protocolos Protocolo[]
+  comisiones Comision[]
+
+  @@map("usuarios")
+}
+
+model Producto {
+  id           String            @id @default(uuid())
+  nombre       String
+  descripcion  String
+  marca        String
+  imagen_url   String?
+  precio_costo Int
+  precio_venta Int
+  stock        Int               @default(0)
+  activo       Boolean           @default(true)
+  categoria    CategoriaProducto @default(OTRO)
+  creado_en    DateTime          @default(now())
+
+  items_protocolo ItemProtocolo[]
+  items_orden     ItemOrden[]
+
+  @@unique([nombre])
+  @@map("productos")
+}
+
+model Protocolo {
+  id               String   @id @default(uuid())
+  nombre           String
+  descripcion      String?
+  token            String   @unique
+  nutricionista_id String
+  nombre_paciente  String
+  email_paciente   String?
+  activo           Boolean  @default(true)
+  creado_en        DateTime @default(now())
+
+  nutricionista Usuario         @relation(fields: [nutricionista_id], references: [id], onDelete: Restrict)
+  items         ItemProtocolo[]
+  ordenes       Orden[]
+
+  @@map("protocolos")
+}
+
+model ItemProtocolo {
+  id           String @id @default(uuid())
+  protocolo_id String
+  producto_id  String
+  cantidad     Int    @default(1)
+  instrucciones String
+
+  protocolo Protocolo @relation(fields: [protocolo_id], references: [id], onDelete: Cascade)
+  producto  Producto  @relation(fields: [producto_id], references: [id], onDelete: Restrict)
+
+  @@unique([protocolo_id, producto_id])
+  @@map("items_protocolo")
+}
+
+model Orden {
+  id                 String      @id @default(uuid())
+  protocolo_id       String
+  nombre_paciente    String
+  email_paciente     String
+  telefono_paciente  String?
+  direccion_despacho String
+  total              Int
+  estado             EstadoOrden @default(PENDIENTE)
+  flow_token         String?     
+  es_recompra        Boolean     @default(false)
+  creado_en          DateTime    @default(now())
+
+  protocolo  Protocolo   @relation(fields: [protocolo_id], references: [id], onDelete: Restrict)
+  items      ItemOrden[]
+  comisiones Comision[]
+
+  @@map("ordenes")
+}
+
+model ItemOrden {
+  id             String @id @default(uuid())
+  orden_id       String
+  producto_id    String
+  cantidad       Int
+  precio_unitario Int
+
+  orden    Orden    @relation(fields: [orden_id], references: [id], onDelete: Cascade)
+  producto Producto @relation(fields: [producto_id], references: [id], onDelete: Restrict)
+
+  @@map("items_orden")
+}
+
+model Comision {
+  id               String         @id @default(uuid())
+  orden_id         String         @unique
+  nutricionista_id String
+  monto            Int
+  porcentaje       Int            @default(10)
+  estado           EstadoComision @default(PENDIENTE)
+  creado_en        DateTime       @default(now())
+
+  orden         Orden   @relation(fields: [orden_id], references: [id], onDelete: Restrict)
+  nutricionista Usuario @relation(fields: [nutricionista_id], references: [id], onDelete: Restrict)
+
+  @@map("comisiones")
+}
