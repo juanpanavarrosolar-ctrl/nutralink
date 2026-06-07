@@ -47,7 +47,7 @@ export default async function PacientePage({ params }: Props) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-gray-50">
 
-      {/* ─── Header ────────────────────────────────────────────── */}
+      {/* ─── Header ─────────────────────────────────────────────────────── */}
       <header className="bg-white border-b border-gray-100 sticky top-0 z-10 shadow-sm">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-2">
           <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center shrink-0">
@@ -59,7 +59,7 @@ export default async function PacientePage({ params }: Props) {
 
       <main className="max-w-2xl mx-auto px-4 pb-16">
 
-        {/* ─── Hero ────────────────────────────────────────────── */}
+        {/* ─── Hero ─────────────────────────────────────────────────────── */}
         <section className="pt-8 pb-6 text-center">
           <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
             <ShieldCheck size={13} />
@@ -78,7 +78,7 @@ export default async function PacientePage({ params }: Props) {
           </div>
         </section>
 
-        {/* ─── Productos ──────────────────────────────────────────── */}
+        {/* ─── Productos ────────────────────────────────────────────────── */}
         <section className="space-y-3 mb-6">
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide px-1">
             Tu plan · {protocolo.items.length} producto{protocolo.items.length !== 1 ? 's' : ''}
@@ -92,6 +92,7 @@ export default async function PacientePage({ params }: Props) {
                 className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
               >
                 <div className="flex gap-4 p-4">
+                  {/* Imagen o emoji según categoría */}
                   <div className="shrink-0">
                     {item.producto.imagen_url ? (
                       <div className="w-16 h-16 rounded-xl overflow-hidden bg-gray-50">
@@ -110,6 +111,7 @@ export default async function PacientePage({ params }: Props) {
                     )}
                   </div>
 
+                  {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <div>
@@ -136,6 +138,7 @@ export default async function PacientePage({ params }: Props) {
                   </div>
                 </div>
 
+                {/* Franja instrucciones */}
                 <div className="border-t border-gray-50 bg-emerald-50/60 px-4 py-2.5 flex items-start gap-2">
                   <Package size={13} className="text-emerald-600 shrink-0 mt-0.5" />
                   <p className="text-xs text-emerald-800 font-medium">{item.instrucciones}</p>
@@ -145,7 +148,7 @@ export default async function PacientePage({ params }: Props) {
           })}
         </section>
 
-        {/* ─── Resumen de precios ─────────────────────────────────────── */}
+        {/* ─── Resumen de precios ───────────────────────────────────────── */}
         <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
           <div className="space-y-2.5">
             {protocolo.items.map((item) => (
@@ -179,7 +182,7 @@ export default async function PacientePage({ params }: Props) {
           </p>
         </section>
 
-        {/* ─── Formulario de compra ────────────────────────────────────── */}
+        {/* ─── Formulario de compra ─────────────────────────────────────── */}
         <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <h2 className="font-bold text-gray-900 text-lg mb-1">Completa tu pedido</h2>
           <p className="text-sm text-gray-500 mb-6">
@@ -187,7 +190,7 @@ export default async function PacientePage({ params }: Props) {
           </p>
 
           <FormularioCompra
-            protocoloId={protocolo.id}
+            protocoloToken={token}
             total={total}
             nombrePacienteInicial={protocolo.nombre_paciente}
             emailPacienteInicial={protocolo.email_paciente ?? ''}
@@ -195,6 +198,7 @@ export default async function PacientePage({ params }: Props) {
         </section>
       </main>
 
+      {/* ─── Footer ───────────────────────────────────────────────────────── */}
       <footer className="text-center py-8 text-xs text-gray-300">
         <div className="flex items-center justify-center gap-1.5 mb-1">
           <Leaf size={11} className="text-emerald-400" />

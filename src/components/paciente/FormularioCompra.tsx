@@ -5,7 +5,7 @@ import { ShoppingCart, Loader2, AlertCircle, RefreshCw } from 'lucide-react'
 import { formatCLP } from '@/lib/utils'
 
 interface Props {
-  protocoloId: string
+  protocoloToken: string
   total: number
   nombrePacienteInicial?: string
   emailPacienteInicial?: string
@@ -19,7 +19,7 @@ const REGIONES_CHILE = [
 ]
 
 export function FormularioCompra({
-  protocoloId, total, nombrePacienteInicial = '', emailPacienteInicial = '',
+  protocoloToken, total, nombrePacienteInicial = '', emailPacienteInicial = '',
 }: Props) {
   const [nombre, setNombre] = useState(nombrePacienteInicial)
   const [email, setEmail] = useState(emailPacienteInicial)
@@ -53,19 +53,18 @@ export function FormularioCompra({
     setEnviando(true)
     setErrorServidor('')
 
+    const direccion = `${calle} ${numero}, ${comuna}, ${region}`
+
     const res = await fetch('/api/ordenes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        protocoloId,
-        nombrePaciente: nombre,
-        emailPaciente: email,
-        telefonoPaciente: telefono,
-        calle,
-        numero,
-        comuna,
-        region,
-        recompraActiva: recompra,
+        protocolo_token: protocoloToken,
+        nombre_paciente: nombre,
+        email,
+        telefono,
+        direccion,
+        quiere_recompra: recompra,
       }),
     })
 
@@ -77,8 +76,9 @@ export function FormularioCompra({
       return
     }
 
+    // TODO: redirigir a Flow cuando esté integrado
     alert(
-      `✅ Orden #${data.ordenId.slice(0, 8).toUpperCase()} creada correctamente.\n\n` +
+      `✅ Orden #${data.orden_id.slice(0, 8).toUpperCase()} creada correctamente.\n\n` +
       `Total: ${formatCLP(data.total)}\n\n` +
       `Pago en integración — pronto podrás pagar directamente aquí con Flow.`
     )
@@ -94,6 +94,7 @@ export function FormularioCompra({
         </div>
       )}
 
+      {/* Datos personales */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Nombre completo" error={errores.nombre}>
           <input
@@ -124,6 +125,7 @@ export function FormularioCompra({
         />
       </Field>
 
+      {/* Dirección */}
       <p className="text-sm font-semibold text-gray-700 pt-1">Dirección de despacho</p>
 
       <div className="grid grid-cols-3 gap-3">
@@ -141,7 +143,7 @@ export function FormularioCompra({
           <input
             value={numero}
             onChange={(e) => setNumero(e.target.value)}
-            placeholder="1234 Depto 5"
+            placeholder="1234"
             className={inputCls(!!errores.numero)}
           />
         </Field>
@@ -169,6 +171,7 @@ export function FormularioCompra({
         </Field>
       </div>
 
+      {/* Recompra */}
       <label className="flex items-start gap-3 cursor-pointer group">
         <div className="relative mt-0.5">
           <input
@@ -198,6 +201,7 @@ export function FormularioCompra({
         </div>
       </label>
 
+      {/* CTA */}
       <button
         type="submit"
         disabled={enviando}
