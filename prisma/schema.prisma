@@ -1,6 +1,5 @@
 generator client {
-  provider   = "prisma-client-js"
-  engineType = "library"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -39,14 +38,14 @@ enum EstadoComision {
 // ─── Modelos ─────────────────────────────────────────────────────────────────
 
 model Usuario {
-  id          String   @id @default(uuid())
-  email       String   @unique
-  nombre      String
-  rol         Rol
-  rut         String?  @unique
+  id           String   @id @default(uuid())
+  email        String   @unique
+  nombre       String
+  rol          Rol
+  rut          String?  @unique
   especialidad String?
-  activo      Boolean  @default(true)
-  creado_en   DateTime @default(now())
+  activo       Boolean  @default(true)
+  creado_en    DateTime @default(now())
 
   protocolos Protocolo[]
   comisiones Comision[]
