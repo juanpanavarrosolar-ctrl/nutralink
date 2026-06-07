@@ -1,21 +1,24 @@
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 import { Plus, FileText, ShoppingBag, Banknote, ChevronRight, Clock } from 'lucide-react'
-import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { prisma } from '@/lib/prisma'
 import { formatCLP } from '@/lib/utils'
 import { CopyLinkButton } from '@/components/nutricionista/CopyLinkButton'
 
-export default async function DashboardPage() {
-  const supabase = await createServerSupabaseClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+const USUARIO_EMAIL = 'juanpa.navarro.solar@gmail.com'
 
+export default async function DashboardPage() {
   const usuario = await prisma.usuario.findUnique({
-    where: { email: user.email! },
+    where: { email: USUARIO_EMAIL },
     select: { id: true, nombre: true },
   })
-  if (!usuario) redirect('/login')
+
+  if (!usuario) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500">Usuario no encontrado en la base de datos.</p>
+      </div>
+    )
+  }
 
   const ahora = new Date()
   const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1)
@@ -61,7 +64,6 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-5xl mx-auto px-6 py-10">
 
-        {/* Saludo */}
         <div className="mb-10 flex items-start justify-between">
           <div>
             <p className="text-sm text-gray-500 mb-1">{saludo()}, {primerNombre}</p>
@@ -76,7 +78,6 @@ export default async function DashboardPage() {
           </Link>
         </div>
 
-        {/* Métricas */}
         <div className="grid grid-cols-3 gap-4 mb-10">
           <MetricCard
             icon={<FileText size={20} className="text-emerald-600" />}
@@ -98,7 +99,6 @@ export default async function DashboardPage() {
           />
         </div>
 
-        {/* Últimos protocolos */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50">
             <h2 className="font-semibold text-gray-900">Últimos protocolos</h2>
@@ -131,7 +131,6 @@ export default async function DashboardPage() {
                   0
                 )
                 const link = `${appUrl}/paciente/${p.token}`
-
                 return (
                   <li key={p.id} className="px-6 py-4 hover:bg-gray-50/60 transition-colors">
                     <div className="flex items-start justify-between gap-4">
@@ -157,7 +156,6 @@ export default async function DashboardPage() {
                           )}
                         </p>
                       </div>
-
                       <div className="flex items-center gap-2 shrink-0">
                         <CopyLinkButton link={link} />
                         <Link
